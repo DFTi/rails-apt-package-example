@@ -1,0 +1,107 @@
+#!/bin/bash
+# TDS Post Install Script
+
+SERVICE_NAME="tds"
+APP_DIR="/opt/caps"
+USER_NAME="tds"
+
+# Add init.d script to the startup scripts
+update-rc.d tds remove
+update-rc.d tds defaults
+
+# Add init.d script alias
+ln -s /etc/init.d/$SERVICE_NAME /bin/$SERVICE_NAME
+
+# Enter install directory
+cd $APP_DIR
+
+# Install bundler
+gem install bundler --no-rdoc --no-ri
+
+# Bundle gems
+RAILS_ENV=production bundle install --deployment
+
+# Compile assets
+#rm -rf $APP_DIR/public/assets
+#RAILS_ENV=production bundle exec rake assets:precompile
+
+# Install passenger
+gem install passenger --no-rdoc --no-ri
+
+# Build nginx with passenger
+yes '' | passenger-install-nginx-module --auto-download --auto
+
+# Add binaries to path
+echo "PATH=$PATH:$APP_DIR/vendor/bin" >> ~/.bashrc
+export PATH=$PATH:$APP_DIR/vendor/bin
+
+# Setup nginx with passenger
+nginx_configuration_file="/opt/nginx/conf/nginx.conf"
+echo "Writing nginx configuration for CAPS into $nginx_configuration_file"
+passenger_gem_path=`ruby -e 'p Gem::Specification.find_by_name("passenger").gem_dir' | sed s/\"//g`
+echo "
+#user  nobody;
+worker_processes  1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    passenger_root $passenger_gem_path;
+    passenger_ruby `which ruby`;
+
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    sendfile        on;
+    keepalive_timeout  65;
+    #gzip  on;
+
+    server {
+      client_max_body_size 1000M;
+      listen 80;
+      server_name $SERVER_NAME;
+      root $APP_DIR/public;
+      passenger_enabled on;
+      passenger_set_cgi_param HTTP_X_ACCEL_MAPPING /=/sec/;
+      passenger_pass_header X-Accel-Redirect;
+
+      location /sec/ {
+        alias /;
+        internal;
+      }
+    }
+
+    # HTTPS server
+    #
+    #server {
+    #    listen       443;
+    #    server_name  localhost;
+
+    #    ssl                  on;
+    #    ssl_certificate      cert.pem;
+    #    ssl_certificate_key  cert.key;
+
+    #    ssl_session_timeout  5m;
+
+    #    ssl_protocols  SSLv2 SSLv3 TLSv1;
+    #    ssl_ciphers  HIGH:!aNULL:!MD5;
+    #    ssl_prefer_server_ciphers   on;
+
+    #    location / {
+    #        root   html;
+    #        index  index.html index.htm;
+    #    }
+    #}
+
+}" > $nginx_configuration_file
+

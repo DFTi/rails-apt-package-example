@@ -1,0 +1,26 @@
+#!/bin/bash
+# TDS Post Remove Script
+
+SERVICE_NAME="tds"
+APP_DIR="/opt/caps"
+USER_NAME="tds"
+
+# Remove init.d script
+update-rc.d tds remove
+
+# Remove Bash variables
+# sed 's/PATH//g' ~/.bashrc
+
+# Remove symbolic link to tools
+unlink tds
+
+# Remove dependencies
+apt-get install -f
+
+# Uninstall nginx-passenger
+# ?
+
+# Uninstall gems
+gem uninstall passenger
+gem uninstall bundler
+

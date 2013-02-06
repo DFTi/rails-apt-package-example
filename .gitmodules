@@ -1,0 +1,3 @@
+[submodule "package/opt/caps"]
+	path = package/opt/caps
+	url = git@github.com:keyvanfatehi/caps.git
