@@ -5,8 +5,10 @@ SERVICE_NAME="tds"
 APP_DIR="/opt/caps"
 USER_NAME="tds"
 
-# Remove init.d script
-update-rc.d tds remove
+# Remove upstarts
+rm /etc/init/nginx.conf
+rm /etc/init/juggernaut.conf
+rm /etc/init/sidekiq.conf
 
 # Remove Bash variables
 # sed 's/PATH//g' ~/.bashrc
