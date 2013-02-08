@@ -2,8 +2,8 @@
 # Build TDS debian package
 
 # Install the following depends if build fails
-# sudo apt-get -y update
-# sudo apt-get -y install zlib1g-dev libssl-dev libsqlite3-dev libmysqlclient-dev imagemagick librmagick-ruby libxml2-dev libxslt1-dev build-essential openssl libreadline6 libreadline6-dev zlib1g libyaml-dev libsqlite3-0 sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison libpq-dev libpq5 libmysql-ruby libmysqlclient-dev libqt4-dev libqtwebkit-dev git nodejs npm yasm libgpac-dev libdirac-dev libgsm1-dev libschroedinger-dev libspeex-dev libvorbis-dev libopenjpeg-dev libdc1394-22-dev libsdl1.2-dev texi2html libfaac-dev libmp3lame-dev libtheora-dev libopencore-amrnb-dev libcurl4-openssl-dev libopencore-amrwb-dev frei0r-plugins-dev libcv-dev libvpx-dev libgavl1 libx264-dev redis-server python-software-properties postgresql libpq-dev
+ sudo apt-get -y update
+ sudo apt-get -y install zlib1g-dev libssl-dev libsqlite3-dev libmysqlclient-dev imagemagick librmagick-ruby libxml2-dev libxslt1-dev build-essential openssl libreadline6 libreadline6-dev zlib1g libyaml-dev libsqlite3-0 sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison libpq-dev libpq5 libmysql-ruby libmysqlclient-dev libqt4-dev libqtwebkit-dev git nodejs npm yasm libgpac-dev libdirac-dev libgsm1-dev libschroedinger-dev libspeex-dev libvorbis-dev libopenjpeg-dev libdc1394-22-dev libsdl1.2-dev texi2html libfaac-dev libmp3lame-dev libtheora-dev libopencore-amrnb-dev libcurl4-openssl-dev libopencore-amrwb-dev frei0r-plugins-dev libcv-dev libvpx-dev libgavl1 libx264-dev redis-server python-software-properties postgresql libpq-dev
 
 
 # Variables
@@ -26,8 +26,6 @@ cp $EXTRAS/database.yml.template $APP/config/database.yml.template
 cp $EXTRAS/tds.sh $VENDOR/bin/tds
 cp $EXTRAS/tds_setup.sh $VENDOR/bin/tds_setup.sh
 
-
-
 # Make and install FFMBC
 
 if [[ -f $CWD/tmp ]]; then
@@ -45,6 +43,7 @@ else
 fi
 
 #chown -R `whoami` $PACKAGE
+cd $CWD
 
 mv ./tmp /tmp
 
