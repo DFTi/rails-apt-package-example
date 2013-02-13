@@ -17,7 +17,7 @@ VENDOR="$APP/vendor"
 
 # Update project from github
 cd $PACKAGE
-git pull origin master
+git submodule init
 git submodule update
 git submodule foreach git pull
 
@@ -39,7 +39,7 @@ else
 	tar -jxvf FFmbc-0.7-rc7.tar.bz2
 	cd FFmbc-0.7-rc7
 	./configure --enable-gpl --enable-libx264 --enable-nonfree --prefix=$APP/vendor
-	make
+	make && make install
 fi
 
 #chown -R `whoami` $PACKAGE
@@ -57,7 +57,6 @@ mv /tmp/tmp ./tmp
 
 cd $CWD/tmp/FFmbc-0.7-rc7
 make uninstall
-rm -rf $CWD/tmp
 
 rm $VENDOR/bin/tds
 rm $VENDOR/bin/tds_setup.sh
